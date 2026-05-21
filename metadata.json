@@ -1,0 +1,6 @@
+{
+  "name": "Fashion OS",
+  "description": "An elite fashion visualization OS featuring real-time mobile virtual try-on with CVPR 2026 Mobile-VTON, interactive 3D scene editing, and high-fidelity local dataset sync.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", serif;
+  --color-bg: #ffffff;
+  --color-text: #111111;
+  --color-accent: #c5a880;
+}
+
+body {
+  @apply bg-background text-text font-sans overflow-x-hidden transition-colors duration-700;
+}
+
+.fashion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 32px;
+}
+
+.aspect-vogue {
+  aspect-ratio: 4 / 5;
+}
+
+.editorial-title {
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark .glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* 🕷️ Product Image Glaring Suppression */
+.dark .dark-suppress {
+  filter: brightness(0.9) contrast(1.05);
+  transition: all 0.4s ease;
+}
+
+.dark .dark-suppress:hover {
+  filter: brightness(1);
+}
+
+/* 🎨 Luxury Minimalist UI */
+.brand-accent {
+  @apply text-accent;
+}
+
+.brand-glow {
+  @apply shadow-[0_0_15px_rgba(197,168,128,0.2)];
+}
+
+.dark .glow-border-accent {
+  @apply border-accent/20 shadow-[0_0_15px_rgba(197,168,128,0.1)];
+}
+
+.aurora-progress {
+  @apply bg-accent dark:bg-gradient-to-r dark:from-[#c5a880] dark:to-[#d4b996] shadow-[0_0_15px_rgba(197,168,128,0.4)];
+}
+
+.neon-accent {
+  text-shadow: 0 0 10px rgba(197, 168, 128, 0.4);
+}
+
+.shimmer-dark {
+  @apply bg-gradient-to-r from-neutral-800 via-neutral-700 to-neutral-800 animate-pulse;
+}
+
+/* 📑 Internationalization Elasticity */
+:lang(en) .elastic-text {
+  @apply tracking-tight leading-snug break-words;
+}
+
+:lang(zh) .elastic-text {
+  @apply leading-relaxed tracking-wide;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-black/20;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 hover:bg-white/20 transition-colors;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.vogue-grain::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+
+@keyframes scan {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100%); }
+}
+
+@keyframes progress {
+  0% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-scan {
+  animation: scan 3s linear infinite;
+}
+
+.animate-progress {
+  animation: progress 20s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
