@@ -334,6 +334,47 @@ app.get("/api/fashion/memory", (req, res) => {
   res.json(FASHION_MEMORY);
 });
 
+// Real Gemini Chat Endpoint for Oculus Dei
+app.post("/api/gemini/chat", async (req, res) => {
+  const { message, history } = req.body;
+  if (!message) {
+    return res.status(400).json({ success: false, error: "Prompt message is required." });
+  }
+
+  try {
+    const contents: any[] = [];
+    if (history && Array.isArray(history)) {
+      history.forEach((h: any) => {
+        contents.push({
+          role: h.role === 'user' ? 'user' : 'model',
+          parts: [{ text: h.text }]
+        });
+      });
+    }
+    contents.push({
+      role: 'user',
+      parts: [{ text: message }]
+    });
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: contents,
+      config: {
+        systemInstruction: "You are the cognitive designer core of 'Oculus Dei' (上帝之眼) - an elite, ultra-minimalist, avant-garde cybernetic fashion house. Speak with concise, elegant, and highly specialized authority. Use English or Chinese. Keep your answers brief, poetic, inspiring, and professional—under 100 words. Describe beautiful silhouettes, progressive graphene knits, digital portrait campaigns, WebGL fabrics, or virtual try-on layers directly when prompted.",
+        temperature: 0.85,
+      }
+    });
+
+    res.json({
+      success: true,
+      reply: response.text || "Direct system synapse complete. Awaiting progressive inputs."
+    });
+  } catch (error: any) {
+    console.error("Gemini system error:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Agent Control System (The Brain)
 app.post("/api/agents/chat", async (req, res) => {
   const { message, context } = req.body;
@@ -558,6 +599,60 @@ app.post("/api/fashion/tryon", (req, res) => {
 });
 
 // --- AI Operations Center Endpoints ---
+
+// Dataset Diagnostics check
+app.get("/api/runtime/diagnostic", (req, res) => {
+  const folders = [
+    "test/image",
+    "test/cloth",
+    "test/image-parse",
+    "test/cloth-mask",
+    "test/pose"
+  ];
+  
+  const results = folders.map(folder => {
+    const fullPath = path.join(process.cwd(), folder);
+    return {
+      folder,
+      exists: fs.existsSync(fullPath),
+      fullPath
+    };
+  });
+
+  const allReady = results.every(r => r.exists);
+
+  res.json({
+    success: true,
+    allReady,
+    results
+  });
+});
+
+// Auto-provision requested folders
+app.post("/api/runtime/provide-datasets", (req, res) => {
+  const folders = [
+    "test/image",
+    "test/cloth",
+    "test/image-parse",
+    "test/cloth-mask",
+    "test/pose"
+  ];
+
+  try {
+    folders.forEach(folder => {
+      const fullPath = path.join(process.cwd(), folder);
+      if (!fs.existsSync(fullPath)) {
+        fs.mkdirSync(fullPath, { recursive: true });
+        fs.writeFileSync(path.join(fullPath, ".gitkeep"), "");
+      }
+    });
+    
+    addLog("SUCCESS: Initialized mandatory inference dataset directory structure.", "SYSTEM");
+    res.json({ success: true, message: "Mandatory dataset directories successfully created." });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 // Runtime Controls
 app.post("/api/runtime/start", (req, res) => {

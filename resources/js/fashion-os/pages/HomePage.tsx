@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as THREE from 'three';
 import { ImmichMediaVault } from '../components/ImmichMediaVault';
+import { 
+  Plus, Mic, Sparkles, Send, Globe, Trash2, 
+  ArrowRight, RefreshCw, FileText, Image as ImageIcon, Check, User
+} from 'lucide-react';
 
 // Interface Declarations
 interface TrendItem {
@@ -58,6 +62,9 @@ export const HomePage: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<MenuState | null>(null);
+  
+  // Real Chat History State for GPT-style Open WebUI dialogue
+  const [chatHistory, setChatHistory] = useState<Array<{ role: 'user' | 'assistant', text: string }>>([]);
 
   // Scroll Parallax position tracker
   const [scrollY, setScrollY] = useState(0);
@@ -75,64 +82,74 @@ export const HomePage: React.FC = () => {
     setTimeout(() => setToastMessage(null), 2500);
   };
 
-  // GPT Consciousness Entry Signal Handler
-  const handleSignalSubmit = (e: React.FormEvent) => {
+  // Real-time Chat Synapsis calling server-side Gemini API
+  const handleSignalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputVal.trim() || isProcessing) return;
 
+    const userMsg = inputVal.trim();
+    setInputVal('');
     setIsProcessing(true);
     setProgress(0);
 
-    // Growing fine line from left to right simulating cinematic output
+    const updatedHistory = [...chatHistory, { role: 'user' as const, text: userMsg }];
+    setChatHistory(updatedHistory);
+
+    // Simulated progress tick during live connection
     const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            const isVogueQuery = inputVal.toUpperCase().includes('VOGUE');
-            
-            // Generate and inject fresh data elements directly into core Trend stream
-            const extractedTrends: TrendItem[] = isVogueQuery ? [
-              {
-                id: `tr-added-${Date.now()}-1`,
-                category: 'VOGUE_2026_PRE_SPRING_INTELLIGENCE',
-                title: 'Spring Solstice Void',
-                description: 'Deconstructed drapes and high-contrast collar shields captured in Paris.',
-                imageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80'
-              },
-              {
-                id: `tr-added-${Date.now()}-2`,
-                category: 'VOGUE_2026_PRE_SPRING_MATERIAL',
-                title: 'Alabaster Synth-Knit',
-                description: 'Off-white textured structures draped symmetrically across protective frameworks.',
-                imageUrl: 'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&w=1200&q=80'
-              }
-            ] : [
-              {
-                id: `tr-added-${Date.now()}-3`,
-                category: 'NEURAL_EXTRACTED_GEN_001',
-                title: 'Fluid Silicon Draping',
-                description: `Generative fashion construct based on vision signals matching "${inputVal}".`,
-                imageUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80'
-              }
-            ];
-
-            setTrends((prev) => [...extractedTrends, ...prev]);
-            setIsProcessing(false);
-            setInputVal('');
-            triggerToast(isVogueQuery ? 'EXTRACTED TREND SIGNAL // DIRECT STREAM INJECTED' : 'VISUAL SIGNALS ENCODED SUCCESSFULLY');
-            
-            // Scroll down smoothly to trend stream
-            const trendSection = document.getElementById('section-trends');
-            if (trendSection) {
-              trendSection.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 400);
-          return 100;
-        }
-        return prev + 1.5;
+        if (prev >= 90) return 90;
+        return prev + 8;
       });
-    }, 45);
+    }, 120);
+
+    try {
+      const response = await fetch('/api/gemini/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMsg, history: chatHistory })
+      });
+
+      clearInterval(interval);
+      setProgress(100);
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setChatHistory([...updatedHistory, { role: 'assistant' as const, text: data.reply }]);
+          
+          // Keep visual response: inject custom premium trends when relevant queries arrive!
+          if (userMsg.toUpperCase().includes('VOGUE') || userMsg.toUpperCase().includes('DESIGN') || userMsg.toUpperCase().includes('IMAGE')) {
+            const addedItem: TrendItem = {
+              id: `tr-added-${Date.now()}`,
+              category: 'OCULUS_DEI_GENERATIVE_SYNAPSE_001',
+              title: userMsg.toUpperCase().includes('VOGUE') ? 'SOLSTICE DRAPERY // PARIS' : 'CHROMIUM SHELL SILHOUETTE',
+              description: data.reply,
+              imageUrl: userMsg.toUpperCase().includes('VOGUE') 
+                ? 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80'
+                : 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80'
+            };
+            setTrends((prev) => [addedItem, ...prev]);
+            triggerToast('VISUAL SPECTRUM COGNITIVE STREAM INJECTED');
+          }
+        } else {
+          setChatHistory([...updatedHistory, { role: 'assistant' as const, text: 'Direct sensory error: Model failed to process request.' }]);
+        }
+      } else {
+        setChatHistory([...updatedHistory, { role: 'assistant' as const, text: 'Synapse error: Server connection timed out.' }]);
+      }
+    } catch (err: any) {
+      clearInterval(interval);
+      setChatHistory([...updatedHistory, { role: 'assistant' as const, text: `Sensory connection failure: ${err.message}` }]);
+    } finally {
+      setIsProcessing(false);
+      setTimeout(() => setProgress(0), 800);
+    }
+  };
+
+  const handleActionClick = (promptText: string) => {
+    setInputVal(promptText);
+    triggerToast('SUGGESTION SELECTED // ENTER TO SEND');
   };
 
   // Close context menu on click
@@ -148,27 +165,146 @@ export const HomePage: React.FC = () => {
       {/* SECTION 1: HERO = 90% AIR ENTRY POINT */}
       <section 
         id="section-home"
-        className="w-full h-screen bg-black flex flex-col items-center justify-center relative select-none px-6"
+        className="w-full min-h-screen bg-black flex flex-col items-center justify-center relative select-none px-6 pt-16 pb-20 overflow-hidden"
       >
-        <form onSubmit={handleSignalSubmit} className="w-full max-w-2xl flex flex-col items-center relative">
-          <span className="text-[9px] tracking-[0.45em] text-zinc-600 mb-8 uppercase font-mono animate-pulse">
-            CONSCIOUSNESS ENTRY POINT // SYSTEM_CORE
-          </span>
+        <form 
+          id="synapse-chat-form"
+          onSubmit={handleSignalSubmit} 
+          className="w-full max-w-2xl flex flex-col items-center relative gap-8 z-20"
+        >
+          {/* Conversational Screen Title (if no active threads) */}
+          {chatHistory.length === 0 ? (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center text-center space-y-4"
+            >
+              <span className="text-[10px] tracking-[0.6em] text-[#00b8d9] uppercase font-mono animate-pulse font-black">
+                OCULUS DEI // 上帝之眼 • AI COGNITIVE CONSCIOUSNESS
+              </span>
+              <h1 className="text-2xl md:text-[2.25rem] font-sans font-light tracking-[0.25em] text-white leading-normal uppercase">
+                你今天在想些什么?
+              </h1>
+            </motion.div>
+          ) : (
+            <div className="w-full flex justify-between items-center border-b border-white/5 pb-3">
+              <span className="text-[9px] tracking-[0.4em] font-mono text-[#00b8d9] font-black uppercase">
+                ACTIVE SYNAPSE CONNECTION // 实时思维对话
+              </span>
+              <button 
+                type="button" 
+                onClick={() => {
+                  setChatHistory([]);
+                  triggerToast('CONSCIOUSNESS SYNAPSE STREAM RESET');
+                }}
+                className="text-[9px] tracking-[0.15em] font-mono text-zinc-500 hover:text-[#00b8d9] flex items-center gap-1.5 transition-all uppercase cursor-pointer font-bold"
+              >
+                <Trash2 size={11} />
+                Clear Thread // 清除
+              </button>
+            </div>
+          )}
 
-          <input
-            type="text"
-            value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
-            placeholder="TYPE YOUR VISION..."
-            disabled={isProcessing}
-            className="w-full bg-transparent text-center text-sm md:text-xl text-white placeholder-zinc-800 border-none outline-none focus:outline-none tracking-[0.35em] font-sans font-light uppercase transition-all"
-            style={{
-              textShadow: inputVal ? '0 0 10px rgba(255,255,255,0.15)' : 'none'
-            }}
-          />
+          {/* Chat Messages Feed container */}
+          <AnimatePresence>
+            {chatHistory.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="w-full max-h-[380px] overflow-y-auto pr-2 space-y-6 flex flex-col scrollbar-thin scrollbar-thumb-zinc-900/40"
+              >
+                {chatHistory.map((msg, idx) => (
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, x: msg.role === 'user' ? 10 : -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ type: 'spring', stiffness: 120, damping: 25 }}
+                    className={`flex flex-col space-y-2 p-5 rounded-3xl border border-white/5 ${
+                      msg.role === 'user' 
+                        ? 'bg-zinc-950/40 border-r-white/20 items-end text-right self-end ml-12' 
+                        : 'bg-zinc-950/80 border-l-[#00b8d9]/20 self-start mr-12 shadow-[0_4px_20px_rgba(0,184,217,0.03)]'
+                    }`}
+                    style={{ maxWidth: '85%' }}
+                  >
+                    <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-500 uppercase font-black">
+                      {msg.role === 'user' ? 'USER // AESTHETIC DIRECTIVE' : 'OCULUS DEI // GENERATIVE SYNAPSE'}
+                    </span>
+                    <p className="text-[12.5px] font-sans text-zinc-200 tracking-wide leading-relaxed font-light whitespace-pre-line">
+                      {msg.text}
+                    </p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* Cinematic Loading Line (grows Left-to-Right) */}
-          <div className="w-full h-[1px] bg-zinc-950 mt-6 relative overflow-hidden">
+          {/* Elongated search/chat capsule styled EXACTLY like the image */}
+          <div className="w-full bg-[#121214] border border-white/5 rounded-[2.25rem] flex flex-col overflow-hidden transition-all duration-300 hover:border-white/10 shadow-[0_15px_45px_rgba(0,0,0,0.85)]">
+            
+            {/* Row 1: Interactive Entry */}
+            <div className="flex items-center gap-3 px-4 py-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setChatHistory([]);
+                  setInputVal('');
+                  triggerToast('SYNAPSE REINITIALIZED');
+                }}
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-zinc-900 hover:bg-zinc-800 border border-white/5 text-zinc-400 hover:text-white transition-all cursor-pointer"
+                title="新建对话 // NEW CHAT"
+              >
+                <Plus size={15} />
+              </button>
+
+              <input
+                type="text"
+                value={inputVal}
+                onChange={(e) => setInputVal(e.target.value)}
+                placeholder="有任何关于时尚、服装或科技细节的问题，尽情提问..."
+                disabled={isProcessing}
+                className="flex-1 bg-transparent text-sm text-white placeholder-zinc-500 border-none outline-none focus:outline-none tracking-wider font-sans py-3"
+              />
+
+              {/* MIC & voice pill on the right */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => triggerToast('AUDIO STREAM STANDBY')}
+                  className="w-8 h-8 flex items-center justify-center rounded-full text-zinc-400 hover:text-white hover:bg-zinc-900 transition-all cursor-pointer"
+                  title="语音输入量化"
+                >
+                  <Mic size={15} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => triggerToast('VOICE PARSING ENGAGED')}
+                  className="bg-zinc-800 border border-white/10 hover:bg-zinc-700 text-[10px] text-zinc-200 px-3.5 py-2 rounded-full font-mono tracking-wider transition-all flex items-center gap-1.5 cursor-pointer font-bold"
+                >
+                  <div className="w-1.5 h-1.5 bg-[#00b8d9] rounded-full animate-ping" />
+                  语音 // VOICE
+                </button>
+              </div>
+            </div>
+
+            {/* Row 2: Bottom Status Band */}
+            <div className="flex justify-between items-center bg-zinc-950/40 px-5 py-3 rounded-b-[2.25rem] border-t border-white/[0.03] text-[9px] font-mono text-zinc-500 leading-normal">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#00b8d9] rounded-full animate-pulse" />
+                <span>你可以发送的消息数量有限，登录或注册即可畅享更长对话。</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => triggerToast('SECURE BRAND DIRECTORY ACCESSED')}
+                className="text-[9px] tracking-widest text-[#00b8d9] bg-[#00b8d9]/5 hover:bg-[#00b8d9]/10 px-3.5 py-1.5 rounded-lg border border-[#00b8d9]/20 transition-all font-bold cursor-pointer uppercase"
+              >
+                登录 // LOGIN
+              </button>
+            </div>
+          </div>
+
+          {/* Cinematic fine Loading Indicator (directly matching image) */}
+          <div className="w-full h-[1.5px] bg-zinc-950 relative overflow-hidden -mt-4">
             <AnimatePresence>
               {isProcessing ? (
                 <motion.div 
@@ -179,13 +315,48 @@ export const HomePage: React.FC = () => {
                   transition={{ ease: 'easeInOut' }}
                 />
               ) : (
-                <div className="h-full w-full bg-white/[0.02]" />
+                <div className="h-full w-full bg-white/[0.01]" />
               )}
             </AnimatePresence>
           </div>
+
+          {/* Quick-action capsule suggestions below the input area */}
+          {chatHistory.length === 0 && (
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-wrap items-center justify-center gap-3.5 mt-2"
+            >
+              <button
+                type="button"
+                onClick={() => handleActionClick('Synthesize a liquid chromium structured jacket with deconstructed graphene weave.')}
+                className="bg-[#121214]/50 hover:bg-zinc-900 hover:border-white/10 text-zinc-400 hover:text-white border border-white/5 rounded-full px-5 py-2.5 text-[9.5px] font-mono tracking-widest transition-all uppercase flex items-center gap-2 cursor-pointer"
+              >
+                <ImageIcon size={12} className="text-[#00b8d9]" />
+                生成图片 // CREATE IMAGES
+              </button>
+              <button
+                type="button"
+                onClick={() => handleActionClick('Draft a custom cyberpunk runway look design brief for Oculus Dei layer 03.')}
+                className="bg-[#121214]/50 hover:bg-zinc-900 hover:border-white/10 text-zinc-400 hover:text-white border border-white/5 rounded-full px-5 py-2.5 text-[9.5px] font-mono tracking-widest transition-all uppercase flex items-center gap-2 cursor-pointer"
+              >
+                <FileText size={12} className="text-[#00b8d9]" />
+                撰写或编辑 // DRAFT IDEAS
+              </button>
+              <button
+                type="button"
+                onClick={() => handleActionClick('Scan the worldwide fashion database for 2026 avant-garde street trends.')}
+                className="bg-[#121214]/50 hover:bg-zinc-900 hover:border-white/10 text-zinc-400 hover:text-white border border-white/5 rounded-full px-5 py-2.5 text-[9.5px] font-mono tracking-widest transition-all uppercase flex items-center gap-2 cursor-pointer"
+              >
+                <Globe size={11} className="text-[#00b8d9]" />
+                查找资料 // SEARCH MATRIX
+              </button>
+            </motion.div>
+          )}
         </form>
 
-        <div className="absolute bottom-16 text-[8px] tracking-[0.3em] text-zinc-600/60 font-mono uppercase">
+        <div className="absolute bottom-12 text-[8px] tracking-[0.3em] text-zinc-650/40 font-mono uppercase text-center w-full">
           SCROLL TO UNVEIL ACTIVE SPECTRAL LAYERS
         </div>
       </section>
@@ -196,8 +367,8 @@ export const HomePage: React.FC = () => {
         className="w-full min-h-screen bg-black relative border-t border-zinc-950"
       >
         <div className="p-12 border-b border-zinc-950 flex justify-between items-center bg-black">
-          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">LAYER_01 // TREND SPECTRUM</span>
-          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">EDGE-TO-EDGE FLUID FLOW</span>
+          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">TREND STREAM // 趋势流</span>
+          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">GLOBAL INTEGRATIVE TRENDS</span>
         </div>
 
         {/* Edge-to-edge stream with 1px pure black lines, zoom on hover + others dim */}
@@ -221,7 +392,7 @@ export const HomePage: React.FC = () => {
                   <motion.img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover grayscale brightness-[0.38] group-hover:grayscale-0 group-hover:brightness-90 transition-all duration-700 pointer-events-none"
+                    className="w-full h-full object-cover grayscale-0 brightness-100 md:grayscale md:brightness-[0.38] md:group-hover:grayscale-0 md:group-hover:brightness-90 transition-all duration-700 pointer-events-none"
                     style={{ y: parallaxOffset }}
                     animate={{ scale: isHovered ? 1.02 : 1.0 }}
                     transition={{ type: 'spring', stiffness: 100, damping: 30 }}
@@ -267,8 +438,8 @@ export const HomePage: React.FC = () => {
         className="w-full h-screen bg-black relative flex flex-col justify-between overflow-hidden"
       >
         <div className="p-12 border-b border-zinc-950 flex justify-between items-center bg-black z-20">
-          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">LAYER_02 // CONCEPT SPECTRUM</span>
-          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">AI RECURSIVE DREAMING</span>
+          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">CONCEPT STREAM // 概念流</span>
+          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">GENERATIVE RECURSIVE SKETCHES</span>
         </div>
 
         {/* 3D Render Port */}
@@ -301,8 +472,8 @@ export const HomePage: React.FC = () => {
         className="w-full h-screen bg-black relative flex flex-col justify-between overflow-hidden"
       >
         <div className="p-12 border-b border-zinc-950 flex justify-between items-center bg-black z-20">
-          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">LAYER_03 // GARMENT SPECTRUM</span>
-          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">LIVING ACTIVE STRUCTURES</span>
+          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">GARMENT STREAM // 服装流</span>
+          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">ACTIVE BRAND SILHOUETTES</span>
         </div>
 
         {/* 3D WebGL Turntable */}
@@ -329,8 +500,8 @@ export const HomePage: React.FC = () => {
         className="w-full h-screen bg-black relative flex flex-col justify-between overflow-hidden"
       >
         <div className="p-12 border-b border-zinc-950 flex justify-between items-center bg-black z-20">
-          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">LAYER_04 // HUMAN SPECTRUM</span>
-          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">DIGITAL PORTRAIT SCENARIOS</span>
+          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">HUMAN STREAM // 视觉流</span>
+          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">DIGITAL CAMPAIGN LOOKS</span>
         </div>
 
         {/* Interactive Illuminated Avatar Viewport */}
@@ -363,8 +534,8 @@ export const HomePage: React.FC = () => {
         className="w-full min-h-screen bg-black relative border-t border-zinc-950 p-6 md:p-12 space-y-8"
       >
         <div className="flex justify-between items-center bg-black z-20 pb-4">
-          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">LAYER_05 // INTELLIGENT ASSET VAULT</span>
-          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">IMMICH FULL-STACK CO-ENGINE</span>
+          <span className="text-[10px] tracking-[0.3em] font-mono text-zinc-500 uppercase">VAULT STREAM // 珍藏流</span>
+          <span className="text-[8px] tracking-[0.2em] font-mono text-zinc-700 uppercase">SECURE BRAND ARCHIVES</span>
         </div>
 
         <ImmichMediaVault />

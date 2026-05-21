@@ -387,23 +387,23 @@ export const ImmichMediaVault: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/5 pb-8 relative z-20">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="p-1 px-2.5 bg-[#f25f0e]/10 text-[#f25f0e] text-[9px] font-mono rounded font-black tracking-widest uppercase">
-              IMMICH CORE v1.112
+            <span className="p-1 px-2.5 bg-[#ffaa00]/10 text-[#ffaa00] text-[9px] font-mono rounded font-black tracking-widest uppercase">
+              Brand Library
             </span>
-            <span className="text-zinc-600 font-mono text-[9px]">// SYSTEM_VAULT</span>
+            <span className="text-zinc-650 font-mono text-[9px]">// ARCHIVES</span>
           </div>
           <h2 className="text-xl md:text-3xl font-serif font-semibold tracking-tight text-white flex items-center gap-3">
-            Intelligent Media & Creative Asset Vault
+            Creative Asset Vault
           </h2>
           <p className="text-[10.5px] text-zinc-500 font-mono leading-relaxed">
-            NEURAL NETWORK ENGINE FOR OFF-GRID RUNWAY RETRIEVAL & HIGH-RESOLUTION SECURE CLUSTERING.
+            A curated index of visual lookbooks, high-resolution garments, materials, and campaign editorials.
           </p>
         </div>
 
         {/* Multi-user Profiles Switching System */}
         <div className="bg-zinc-900/60 p-2.5 rounded-2xl border border-white/5 flex items-center gap-4">
           <div className="space-y-1">
-            <p className="text-[8px] text-zinc-500 font-mono text-right font-black uppercase tracking-widest">ACTIVE SECTOR ARCHITECT</p>
+            <p className="text-[8px] text-zinc-500 font-mono text-right font-black uppercase tracking-widest">COLLECTOR</p>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
               <span className="text-[11px] font-mono font-bold text-white uppercase">{activeUser.name}</span>
@@ -466,20 +466,6 @@ export const ImmichMediaVault: React.FC = () => {
             Vault Administration
           </button>
         </div>
-
-        {/* User quota visualization */}
-        <div className="hidden lg:flex items-center gap-4 pr-3 text-[10px] font-mono text-zinc-400">
-          <div className="text-right space-y-0.5">
-            <span className="text-zinc-500">USED STORAGE CAPACITY:</span>
-            <p className="text-white font-black">{activeUser.storageUsed} / {activeUser.quota}</p>
-          </div>
-          <div className="w-24 h-2 bg-zinc-900 border border-white/5 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-orange-400 to-[#ffaa00]" 
-              style={{ width: activeUser.id === 'dir-1' ? '41%' : activeUser.id === 'stylist-2' ? '39%' : '24%' }}
-            />
-          </div>
-        </div>
       </div>
 
       {/* Main Container Sections based on Navigation Tab */}
@@ -500,15 +486,15 @@ export const ImmichMediaVault: React.FC = () => {
                 <div className="flex items-center justify-between border-b border-white/5 pb-3">
                   <div className="flex items-center gap-2 text-[#ffaa00]">
                     <Cpu size={14} />
-                    <span className="text-[10px] font-black tracking-widest uppercase font-mono">Neural Clustering Core</span>
+                    <span className="text-[10px] font-black tracking-widest uppercase font-mono">Aesthetics Categorization</span>
                   </div>
-                  <span className="text-[8px] font-mono text-zinc-500">REAL-TIME ANNOTATION</span>
+                  <span className="text-[8px] font-mono text-zinc-500">SMART ARCHIVE</span>
                 </div>
 
                 {/* Face recognition cluster list */}
                 <div className="space-y-3">
                   <label className="text-[9.5px] font-mono text-zinc-400 block tracking-[0.1em] uppercase">
-                    Face Clusters Detected (People List)
+                    Subjects // 人物分类
                   </label>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -541,7 +527,7 @@ export const ImmichMediaVault: React.FC = () => {
                 {/* AI Object Categories list */}
                 <div className="space-y-3 pt-2">
                   <label className="text-[9.5px] font-mono text-zinc-400 block tracking-[0.1em] uppercase">
-                    Auto-Object Classifications
+                    Categories // 属性分类
                   </label>
                   <div className="flex flex-wrap gap-1.5">
                     <button
@@ -764,7 +750,7 @@ export const ImmichMediaVault: React.FC = () => {
                               alt={asset.name}
                               referrerPolicy="no-referrer"
                               className={`w-full h-full object-cover transition-all duration-700 ${
-                                isLivePlaying ? 'scale-105 saturate-150 brightness-110' : 'grayscale group-hover:grayscale-0 group-hover:scale-102 filter contrast-105 brightness-[0.62] group-hover:brightness-90'
+                                isLivePlaying ? 'scale-105 saturate-150 brightness-110' : 'grayscale-0 brightness-100 filter contrast-105 md:grayscale md:brightness-[0.62] md:group-hover:grayscale-0 md:group-hover:scale-102 md:group-hover:brightness-90'
                               }`}
                               style={{
                                 filter: isLivePlaying ? `hue-rotate(${motionFrame * 12}deg)` : undefined
@@ -866,26 +852,26 @@ export const ImmichMediaVault: React.FC = () => {
                     {/* Metadata tags */}
                     <div className="space-y-4">
                       <div className="text-center font-mono py-1 border-b border-white/5 pb-2">
-                        <p className="text-[10px] text-zinc-500 uppercase tracking-widest">// RAW EXIF PARSER</p>
+                        <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Aesthetic Specification // 属性</p>
                         <h4 className="text-[11.5px] font-bold text-white truncate mt-1">{selectedAsset.name}</h4>
                       </div>
 
                       {/* EXIF camera details row grid */}
                       <div className="grid grid-cols-2 gap-3 text-left font-mono text-[9px]">
                         <div className="bg-zinc-950/50 p-2.5 rounded-lg border border-white/5 space-y-1">
-                          <span className="text-zinc-600 block text-[7.5px] uppercase">CAM BODY</span>
+                          <span className="text-zinc-650 block text-[7.5px] uppercase">SOURCE // 来源</span>
                           <span className="text-white font-black truncate block">{selectedAsset.cameraModel}</span>
                         </div>
                         <div className="bg-zinc-950/50 p-2.5 rounded-lg border border-white/5 space-y-1">
-                          <span className="text-zinc-600 block text-[7.5px] uppercase">LENS PROFILE</span>
+                          <span className="text-zinc-650 block text-[7.5px] uppercase">PERSPECTIVE // 视角</span>
                           <span className="text-white font-black truncate block">{selectedAsset.lensModel}</span>
                         </div>
                         <div className="bg-zinc-950/50 p-2.5 rounded-lg border border-white/5 space-y-1">
-                          <span className="text-zinc-600 block text-[7.5px] uppercase">CAMERA ISO</span>
+                          <span className="text-zinc-650 block text-[7.5px] uppercase">SENSITIVITY // 曝光</span>
                           <span className="text-white font-black block">ISO {selectedAsset.iso}</span>
                         </div>
                         <div className="bg-zinc-950/50 p-2.5 rounded-lg border border-white/5 space-y-1">
-                          <span className="text-zinc-600 block text-[7.5px] uppercase">APERTURE / SPEED</span>
+                          <span className="text-zinc-650 block text-[7.5px] uppercase">DIMENSIONS // 规格</span>
                           <span className="text-white font-black block">{selectedAsset.shutterSpeed} @ {selectedAsset.aperture}</span>
                         </div>
                       </div>
@@ -894,9 +880,9 @@ export const ImmichMediaVault: React.FC = () => {
                       <div className="bg-zinc-950/60 p-4 rounded-2xl border border-white/5 space-y-3">
                         <div className="flex items-center gap-1.5 text-orange-400">
                           <MapPin size={11} />
-                          <span className="text-[8.5px] font-mono tracking-widest uppercase">GPS METADATA LOCATOR</span>
+                          <span className="text-[8.5px] font-mono tracking-widest uppercase">LOCATION // 拍摄定位</span>
                         </div>
-                        <p className="text-[9px] font-mono text-zinc-300 tracking-wide font-sans">{selectedAsset.gps.locationName}</p>
+                        <p className="text-[9px] font-mono text-zinc-350 tracking-wide font-sans">{selectedAsset.gps.locationName}</p>
                         
                         {/* Interactive schematic map view box */}
                         <div className="h-24 bg-black border border-white/5 rounded-xl relative overflow-hidden flex items-center justify-center">
@@ -912,10 +898,7 @@ export const ImmichMediaVault: React.FC = () => {
                             <circle cx="50" cy="45" r="4" fill="#ff7700" className="animate-pulse" />
                             <circle cx="50" cy="45" r="8" stroke="#ff7700" strokeWidth="0.5" fill="none" className="animate-ping" />
                           </svg>
-                          <div className="absolute top-2 left-2 text-[6.5px] font-mono text-zinc-600 bg-black/80 px-1 py-0.5 rounded">
-                            LAT: {selectedAsset.gps.lat.toFixed(4)} / LNG: {selectedAsset.gps.lng.toFixed(4)}
-                          </div>
-                          <p className="text-[8px] font-mono text-zinc-600 tracking-widest z-10 bottom-2 absolute uppercase">MAPPING MATRIX CONV</p>
+                          <p className="text-[8px] font-mono text-zinc-650 tracking-widest z-10 bottom-2 absolute uppercase">AESTHETIC PLACEMENT GRID</p>
                         </div>
                       </div>
 
@@ -923,7 +906,7 @@ export const ImmichMediaVault: React.FC = () => {
                       {downloadProgress !== null ? (
                         <div className="bg-zinc-950 p-4 rounded-xl border border-white/5 space-y-2 font-mono text-[9px] text-[#ffaa00]">
                           <div className="flex justify-between items-center text-zinc-400">
-                            <span>DOWNLOADING DEVICE ATOM...</span>
+                            <span>DOWNLOADING ASSET...</span>
                             <span>{downloadProgress}%</span>
                           </div>
                           <div className="w-full h-1 bg-zinc-900 rounded-full overflow-hidden">

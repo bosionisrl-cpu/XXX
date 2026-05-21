@@ -1,6 +1,6 @@
 {
-  "name": "Fashion OS",
-  "description": "An elite fashion visualization OS featuring real-time mobile virtual try-on with CVPR 2026 Mobile-VTON, interactive 3D scene editing, and high-fidelity local dataset sync.",
+  "name": "Oculus Dei // 上帝之眼",
+  "description": "Oculus Dei (上帝之眼) - Ultra-minimalist fashion consciousness entry point & multi-layer visual intelligence cosmos.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

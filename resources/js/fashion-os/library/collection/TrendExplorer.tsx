@@ -174,7 +174,7 @@ export const TrendExplorer: React.FC = () => {
                   <motion.img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover grayscale brightness-35 group-hover:grayscale-0 group-hover:brightness-90 transition-all duration-700 pointer-events-none"
+                    className="w-full h-full object-cover grayscale-0 brightness-100 md:grayscale md:brightness-35 md:group-hover:grayscale-0 md:group-hover:brightness-90 transition-all duration-700 pointer-events-none"
                     style={{
                       y: parallaxY,
                     }}
